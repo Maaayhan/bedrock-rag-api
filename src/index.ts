@@ -5,8 +5,18 @@ import helmet from "helmet";
 import { makeBedrockClient, retrieveAndGenerate } from "./bedrock";
 
 const app = express();
-app.use(helmet());
-app.use(cors());
+
+// Configure helmet to allow Railway healthcheck
+app.use(helmet({
+  contentSecurityPolicy: false, // Allow Railway healthcheck
+}));
+
+// Configure CORS to allow Railway healthcheck
+app.use(cors({
+  origin: true, // Allow all origins including Railway healthcheck
+  credentials: true
+}));
+
 app.use(express.json({ limit: "1mb" }));
 
 const env = {
@@ -64,6 +74,9 @@ app.post("/rag/query", async (req, res) => {
   }
 });
 
-app.listen(Number(env.PORT), () => {
-  console.log(`🚀 Bedrock RAG API running on :${env.PORT}`);
+// Listen on all interfaces (0.0.0.0) to ensure Railway can reach the service
+const port = Number(env.PORT);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`🚀 Bedrock RAG API running on port ${port}`);
+  console.log(`Health check available at: http://localhost:${port}/health`);
 });
