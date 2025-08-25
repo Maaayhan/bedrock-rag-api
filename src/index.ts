@@ -50,7 +50,11 @@ JSON only:
 Current date: ${currentDate}.`;
 }
 
-// 健康检查
+// 健康检查 - 支持根路径和 /health 路径
+app.get("/", (_req, res) => {
+  res.status(200).send("OK");
+});
+
 app.get("/health", (_req, res) => {
   res.status(200).json({ ok: true, ts: new Date().toISOString() });
 });
