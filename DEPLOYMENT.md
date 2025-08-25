@@ -1,20 +1,20 @@
-# 部署检查清单
+# Deployment Checklist
 
-## Render 部署（推荐）
+## Render Deployment (Recommended)
 
-### 1. 创建 Render 服务
-1. 访问 [Render.com](https://render.com) 并登录
-2. 点击 "New" → "Web Service"
-3. 连接你的 GitHub 仓库：`https://github.com/Maaayhan/bedrock-rag-api`
-4. 配置服务：
+### 1. Create Render Service
+1. Visit [Render.com](https://render.com) and login
+2. Click "New" → "Web Service"
+3. Connect your GitHub repository: `https://github.com/Maaayhan/bedrock-rag-api`
+4. Configure service:
    - **Name**: `bedrock-rag-api`
    - **Runtime**: `Node`
    - **Build Command**: `npm install && npm run build`
    - **Start Command**: `npm start`
-   - **Plan**: `Free` (适合测试)
+   - **Plan**: `Free` (suitable for testing)
 
-### 2. 环境变量配置
-在 Render Dashboard → Environment 中设置以下变量：
+### 2. Environment Variables Configuration
+Set the following variables in Render Dashboard → Environment:
 
 ```
 AWS_REGION=us-east-1
@@ -24,17 +24,17 @@ AWS_ACCESS_KEY_ID=your_aws_access_key_id
 AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
 ```
 
-### 3. 部署验证
-部署完成后，访问：
-- `GET https://your-app.onrender.com/health` - 健康检查
-- `POST https://your-app.onrender.com/rag/query` - 主要 API
+### 3. Deployment Verification
+After deployment is complete, visit:
+- `GET https://your-app.onrender.com/health` - Health check
+- `POST https://your-app.onrender.com/rag/query` - Main API
 
 ---
 
-## Railway 部署（备选）
+## Railway Deployment (Alternative)
 
-### 1. 环境变量配置
-在 Railway Project → Variables 中设置以下变量：
+### 1. Environment Variables Configuration
+Set the following variables in Railway Project → Variables:
 
 ```
 AWS_REGION=us-east-1
@@ -44,51 +44,51 @@ AWS_ACCESS_KEY_ID=your_aws_access_key_id
 AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
 ```
 
-### 2. AWS 权限要求
-确保 AWS 用户/角色具有以下权限：
+### 2. AWS Permission Requirements
+Ensure AWS user/role has the following permissions:
 - `bedrock:InvokeModel`
 - `bedrock:RetrieveAndGenerate`
-- 对指定 Knowledge Base 的访问权限
+- Access permissions to the specified Knowledge Base
 
-### 3. 部署步骤
-1. 推送代码到 GitHub 仓库
-2. 在 Railway 中连接 GitHub 仓库
-3. 设置环境变量
-4. Railway 会自动运行：
+### 3. Deployment Steps
+1. Push code to GitHub repository
+2. Connect GitHub repository in Railway
+3. Set environment variables
+4. Railway will automatically run:
    - `npm install`
-   - `npm run build` (通过 postinstall)
+   - `npm run build` (via postinstall)
    - `npm start`
 
-### 4. 验证部署
-部署完成后，访问：
-- `GET https://your-app.railway.app/health` - 健康检查
-- `POST https://your-app.railway.app/rag/query` - 主要 API
+### 4. Deployment Verification
+After deployment is complete, visit:
+- `GET https://your-app.railway.app/health` - Health check
+- `POST https://your-app.railway.app/rag/query` - Main API
 
-### 5. 故障排除
+### 5. Troubleshooting
 
-#### 编译错误
-- 检查 TypeScript 版本兼容性
-- 确认所有依赖都已安装
+#### Compilation Errors
+- Check TypeScript version compatibility
+- Confirm all dependencies are installed
 
-#### 运行时错误
-- 检查环境变量是否正确设置
-- 验证 AWS 凭据和权限
-- 检查 Bedrock 服务在指定区域是否可用
+#### Runtime Errors
+- Check if environment variables are correctly set
+- Verify AWS credentials and permissions
+- Check if Bedrock service is available in the specified region
 
-#### API 调用失败
-- 验证 Knowledge Base ID 是否正确
-- 检查 Model ARN 格式
-- 确认 AWS 区域配置
+#### API Call Failures
+- Verify Knowledge Base ID is correct
+- Check Model ARN format
+- Confirm AWS region configuration
 
-## 性能优化建议
+## Performance Optimization Recommendations
 
-1. **冷启动优化**: Railway 的免费套餐有冷启动延迟，考虑使用定时健康检查保持服务活跃
-2. **错误处理**: 生产环境建议添加更详细的错误日志和监控
-3. **请求限制**: 考虑添加请求频率限制和超时处理
-4. **响应验证**: 添加 JSON 格式验证确保返回有效数据
+1. **Cold Start Optimization**: Free tier platforms have cold start delays, consider using scheduled health checks to keep service active
+2. **Error Handling**: Production environments should add more detailed error logging and monitoring
+3. **Request Limiting**: Consider adding request rate limiting and timeout handling
+4. **Response Validation**: Add JSON format validation to ensure valid data return
 
-## 监控和维护
+## Monitoring and Maintenance
 
-- 定期检查 Railway 日志
-- 监控 AWS Bedrock 使用量和费用
-- 定期更新依赖包安全补丁
+- Regularly check deployment platform logs
+- Monitor AWS Bedrock usage and costs
+- Regularly update dependency security patches

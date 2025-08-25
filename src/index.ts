@@ -6,14 +6,14 @@ import { makeBedrockClient, retrieveAndGenerate } from "./bedrock";
 
 const app = express();
 
-// Configure helmet to allow Railway healthcheck
+// Configure helmet to allow healthcheck
 app.use(helmet({
-  contentSecurityPolicy: false, // Allow Railway healthcheck
+  contentSecurityPolicy: false, // Allow healthcheck
 }));
 
-// Configure CORS to allow Railway healthcheck
+// Configure CORS to allow healthcheck
 app.use(cors({
-  origin: true, // Allow all origins including Railway healthcheck
+  origin: true, // Allow all origins including healthcheck
   credentials: true
 }));
 
@@ -21,12 +21,12 @@ app.use(express.json({ limit: "1mb" }));
 
 const env = {
   PORT: process.env.PORT || "3000",
-  AWS_REGION: process.env.AWS_REGION || "us-east-1", // 默认区域
+  AWS_REGION: process.env.AWS_REGION || "us-east-1", // Default region
   BEDROCK_KB_ID: process.env.BEDROCK_KB_ID || "",
   BEDROCK_MODEL_ARN: process.env.BEDROCK_MODEL_ARN || "",
 };
 
-// 验证必需的环境变量
+// Validate required environment variables
 console.log("🔧 Environment Check:");
 console.log("- AWS_REGION:", env.AWS_REGION);
 console.log("- BEDROCK_KB_ID:", env.BEDROCK_KB_ID ? "✓ Set" : "✗ Missing");
@@ -34,7 +34,7 @@ console.log("- BEDROCK_MODEL_ARN:", env.BEDROCK_MODEL_ARN ? "✓ Set" : "✗ Mis
 console.log("- AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID ? "✓ Set" : "✗ Missing");
 console.log("- AWS_SECRET_ACCESS_KEY:", process.env.AWS_SECRET_ACCESS_KEY ? "✓ Set" : "✗ Missing");
 
-// 检查关键环境变量
+// Check critical environment variables
 const missingVars = [];
 if (!env.BEDROCK_KB_ID) missingVars.push("BEDROCK_KB_ID");
 if (!env.BEDROCK_MODEL_ARN) missingVars.push("BEDROCK_MODEL_ARN");
@@ -48,7 +48,7 @@ if (missingVars.length > 0) {
 
 const client = makeBedrockClient(env);
 
-// —— 你的系统 Prompt（极简与统一）——
+// System Prompt (minimal and consistent)
 function buildSystemPrompt() {
   const currentDate = new Date().toISOString().split("T")[0];
   return `Return the top 5 most relevant MBS candidates (single items or bundles). Each must follow MBS rules (validity, no conflicts).
@@ -70,7 +70,7 @@ JSON only:
 Current date: ${currentDate}.`;
 }
 
-// 健康检查 - 支持根路径和 /health 路径
+// Health check - support both root path and /health path
 app.get("/", (_req, res) => {
   res.status(200).send("OK");
 });
@@ -79,7 +79,7 @@ app.get("/health", (_req, res) => {
   res.status(200).json({ ok: true, ts: new Date().toISOString() });
 });
 
-// 主接口：POST /rag/query
+// Main endpoint: POST /rag/query
 app.post("/rag/query", async (req, res) => {
   try {
     const query = (req.body?.query ?? "").toString().trim();
@@ -90,7 +90,7 @@ app.post("/rag/query", async (req, res) => {
     const systemPrompt = buildSystemPrompt();
     const output = await retrieveAndGenerate(client, env, query, systemPrompt);
 
-    // 直接返回模型的 outputText（应为 JSON 字符串）；若不是 JSON，可按需解析/校验
+    // Return model output directly (should be JSON string); parse/validate if needed
     res.type("application/json").send(output);
   } catch (e: any) {
     console.error("RAG error:", e);
@@ -98,7 +98,7 @@ app.post("/rag/query", async (req, res) => {
   }
 });
 
-// Listen on all interfaces (0.0.0.0) to ensure Railway can reach the service
+// Listen on all interfaces (0.0.0.0) to ensure deployment platforms can reach the service
 const port = Number(env.PORT);
 app.listen(port, '0.0.0.0', () => {
   console.log(`🚀 Bedrock RAG API running on port ${port}`);

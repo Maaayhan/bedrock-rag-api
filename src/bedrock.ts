@@ -19,14 +19,14 @@ export function makeBedrockClient(env: Env) {
   
   return new BedrockAgentRuntimeClient({ 
     region: env.AWS_REGION,
-    // 让 AWS SDK 自动从环境变量读取凭据
+    // Let AWS SDK automatically read credentials from environment variables
     credentials: undefined
   });
 }
 
 /**
- * 调用 Bedrock KB：RetrieveAndGenerate
- * 按 AWS v3 SDK 推荐的入参结构组织
+ * Call Bedrock KB: RetrieveAndGenerate
+ * Organized according to AWS v3 SDK recommended input structure
  */
 export async function retrieveAndGenerate(
   client: BedrockAgentRuntimeClient,
@@ -43,7 +43,7 @@ export async function retrieveAndGenerate(
       knowledgeBaseConfiguration: {
         knowledgeBaseId: env.BEDROCK_KB_ID,
         modelArn: env.BEDROCK_MODEL_ARN,
-        // 可选：retrievalConfiguration / generationConfiguration ...
+        // Optional: retrievalConfiguration / generationConfiguration ...
       },
     },
   };
@@ -51,6 +51,6 @@ export async function retrieveAndGenerate(
   const cmd = new RetrieveAndGenerateCommand(params);
   const res = await client.send(cmd);
 
-  // output.text 里通常就是模型生成的文本结果（你的 JSON）
+  // output.text usually contains the model-generated text result (your JSON)
   return res.output?.text ?? "";
 }
