@@ -26,14 +26,6 @@ const env = {
   BEDROCK_MODEL_ARN: process.env.BEDROCK_MODEL_ARN || "",
 };
 
-// Validate required environment variables
-console.log("🔧 Environment Check:");
-console.log("- AWS_REGION:", env.AWS_REGION);
-console.log("- BEDROCK_KB_ID:", env.BEDROCK_KB_ID ? "✓ Set" : "✗ Missing");
-console.log("- BEDROCK_MODEL_ARN:", env.BEDROCK_MODEL_ARN ? "✓ Set" : "✗ Missing");
-console.log("- AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID ? "✓ Set" : "✗ Missing");
-console.log("- AWS_SECRET_ACCESS_KEY:", process.env.AWS_SECRET_ACCESS_KEY ? "✓ Set" : "✗ Missing");
-
 // Check critical environment variables
 const missingVars = [];
 if (!env.BEDROCK_KB_ID) missingVars.push("BEDROCK_KB_ID");
@@ -49,9 +41,9 @@ if (missingVars.length > 0) {
 const client = makeBedrockClient(env);
 
 // System Prompt (minimal and consistent)
-function buildSystemPrompt() {
+function buildSystemPrompt(topK: number = 5) {
   const currentDate = new Date().toISOString().split("T")[0];
-  return `Return the top 5 most relevant MBS candidates (single items or bundles). Each must follow MBS rules (validity, no conflicts).
+  return `Return the top ${topK} most relevant MBS candidates (single items or bundles). Each must follow MBS rules (validity, no conflicts).
 
 JSON only:
 {
@@ -87,7 +79,21 @@ app.post("/rag/query", async (req, res) => {
       return res.status(400).json({ error: "Missing 'query' in body" });
     }
 
-    const systemPrompt = buildSystemPrompt();
+    // Parse and validate top-k parameter
+    let topK = 5; // default value
+    if (req.body?.top !== undefined) {
+      const topValue = parseInt(req.body.top);
+      if (isNaN(topValue) || topValue < 1 || topValue > 20) {
+        return res.status(400).json({ 
+          error: "Invalid 'top' parameter. Must be a number between 1 and 20" 
+        });
+      }
+      topK = topValue;
+    }
+
+    console.log(`Processing query with top-${topK} results: "${query}"`);
+
+    const systemPrompt = buildSystemPrompt(topK);
     const output = await retrieveAndGenerate(client, env, query, systemPrompt);
 
     // Return model output directly (should be JSON string); parse/validate if needed

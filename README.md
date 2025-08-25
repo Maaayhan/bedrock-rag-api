@@ -24,9 +24,15 @@ npm run dev
 
 **Using curl:**
 ```bash
+# Default (top 5 results)
 curl -X POST http://localhost:3000/rag/query \
   -H "Content-Type: application/json" \
   -d '{"query":"20-minute GP telehealth for chronic disease review"}'
+
+# Custom top-k results
+curl -X POST http://localhost:3000/rag/query \
+  -H "Content-Type: application/json" \
+  -d '{"query":"20-minute GP telehealth for chronic disease review","top":3}'
 ```
 
 **Health check:**
@@ -58,9 +64,14 @@ curl http://localhost:3000/health
 Request body:
 ```json
 {
-  "query": "your search query"
+  "query": "your search query",
+  "top": 3
 }
 ```
+
+Parameters:
+- `query` (required): Your search query string
+- `top` (optional): Number of top results to return (1-20, default: 5)
 
 Response: MBS-related JSON results
 
