@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: bedrock-rag-api
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+    disk:
+      name: bedrock-rag-data
+      mountPath: /opt/render/project/data
+      sizeGB: 1

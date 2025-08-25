@@ -34,15 +34,22 @@ curl -X POST http://localhost:3000/rag/query \
 curl http://localhost:3000/health
 ```
 
-## Railway 部署
+## Render 部署
+
+1. 连接 GitHub 仓库到 Render
+2. 选择 "Web Service" 类型
+3. 在 Environment Variables 中设置：
+   - `AWS_REGION=us-east-1`
+   - `BEDROCK_KB_ID=your_knowledge_base_id`  
+   - `BEDROCK_MODEL_ARN=arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0`
+   - `AWS_ACCESS_KEY_ID=your_access_key`
+   - `AWS_SECRET_ACCESS_KEY=your_secret_key`
+4. Render 会自动运行 `npm install && npm run build` 和 `npm start`
+
+### Railway 部署（备选）
 
 1. 连接 GitHub 仓库到 Railway
-2. 在 Railway Project → Variables 中设置环境变量：
-   - `AWS_REGION`
-   - `BEDROCK_KB_ID`  
-   - `BEDROCK_MODEL_ARN`
-   - `AWS_ACCESS_KEY_ID`
-   - `AWS_SECRET_ACCESS_KEY`
+2. 在 Railway Project → Variables 中设置环境变量（同上）
 3. Railway 会自动运行 `npm run build` 和 `npm start`
 
 ## API 接口

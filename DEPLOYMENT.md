@@ -1,17 +1,47 @@
-# Railway 部署检查清单
+# 部署检查清单
 
-## 部署前准备
+## Render 部署（推荐）
+
+### 1. 创建 Render 服务
+1. 访问 [Render.com](https://render.com) 并登录
+2. 点击 "New" → "Web Service"
+3. 连接你的 GitHub 仓库：`https://github.com/Maaayhan/bedrock-rag-api`
+4. 配置服务：
+   - **Name**: `bedrock-rag-api`
+   - **Runtime**: `Node`
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
+   - **Plan**: `Free` (适合测试)
+
+### 2. 环境变量配置
+在 Render Dashboard → Environment 中设置以下变量：
+
+```
+AWS_REGION=us-east-1
+BEDROCK_KB_ID=your_knowledge_base_id
+BEDROCK_MODEL_ARN=arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0
+AWS_ACCESS_KEY_ID=your_aws_access_key_id
+AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
+```
+
+### 3. 部署验证
+部署完成后，访问：
+- `GET https://your-app.onrender.com/health` - 健康检查
+- `POST https://your-app.onrender.com/rag/query` - 主要 API
+
+---
+
+## Railway 部署（备选）
 
 ### 1. 环境变量配置
 在 Railway Project → Variables 中设置以下变量：
 
 ```
-PORT=3000
-AWS_REGION=ap-southeast-2
-BEDROCK_KB_ID=kb-xxxxxxxxxxxxxxxx
-BEDROCK_MODEL_ARN=arn:aws:bedrock:ap-southeast-2::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0
-AWS_ACCESS_KEY_ID=your_access_key
-AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_REGION=us-east-1
+BEDROCK_KB_ID=your_knowledge_base_id
+BEDROCK_MODEL_ARN=arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0
+AWS_ACCESS_KEY_ID=your_aws_access_key_id
+AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
 ```
 
 ### 2. AWS 权限要求
