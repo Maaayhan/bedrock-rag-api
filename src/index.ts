@@ -42,7 +42,7 @@ Current date: ${currentDate}.`;
 
 // 健康检查
 app.get("/health", (_req, res) => {
-  res.json({ ok: true, ts: new Date().toISOString() });
+  res.status(200).json({ ok: true, ts: new Date().toISOString() });
 });
 
 // 主接口：POST /rag/query
