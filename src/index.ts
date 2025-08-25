@@ -26,13 +26,32 @@ const env = {
   BEDROCK_MODEL_ARN: process.env.BEDROCK_MODEL_ARN || "",
 };
 
+// Debug: 打印所有环境变量
+console.log("=== DEBUG: Environment Variables ===");
+console.log("All env keys:", Object.keys(process.env));
+console.log("Total env vars count:", Object.keys(process.env).length);
+
+// 查找 AWS 相关的环境变量
+const awsEnvs = Object.keys(process.env).filter(key => 
+  key.includes('AWS') || key.includes('BEDROCK')
+);
+console.log("AWS/BEDROCK related env vars:", awsEnvs);
+
 // 验证必需的环境变量
-console.log("Environment check:");
+console.log("\n=== Environment Check ===");
 console.log("- AWS_REGION:", env.AWS_REGION);
 console.log("- BEDROCK_KB_ID:", env.BEDROCK_KB_ID ? "✓ Set" : "✗ Missing");
 console.log("- BEDROCK_MODEL_ARN:", env.BEDROCK_MODEL_ARN ? "✓ Set" : "✗ Missing");
 console.log("- AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID ? "✓ Set" : "✗ Missing");
 console.log("- AWS_SECRET_ACCESS_KEY:", process.env.AWS_SECRET_ACCESS_KEY ? "✓ Set" : "✗ Missing");
+
+// 打印具体的环境变量值（隐藏敏感信息）
+console.log("\n=== Detailed Values ===");
+console.log("process.env.AWS_REGION:", process.env.AWS_REGION);
+console.log("process.env.BEDROCK_KB_ID:", process.env.BEDROCK_KB_ID);
+console.log("process.env.BEDROCK_MODEL_ARN:", process.env.BEDROCK_MODEL_ARN ? "[SET]" : "[NOT SET]");
+console.log("process.env.AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID ? "[SET]" : "[NOT SET]");
+console.log("process.env.AWS_SECRET_ACCESS_KEY:", process.env.AWS_SECRET_ACCESS_KEY ? "[SET]" : "[NOT SET]");
 
 // 检查关键环境变量
 const missingVars = [];
