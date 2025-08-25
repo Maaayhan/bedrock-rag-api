@@ -11,7 +11,17 @@ type Env = {
 };
 
 export function makeBedrockClient(env: Env) {
-  return new BedrockAgentRuntimeClient({ region: env.AWS_REGION });
+  console.log(`Creating Bedrock client for region: ${env.AWS_REGION}`);
+  
+  if (!env.AWS_REGION) {
+    throw new Error("AWS_REGION is required but not provided");
+  }
+  
+  return new BedrockAgentRuntimeClient({ 
+    region: env.AWS_REGION,
+    // 让 AWS SDK 自动从环境变量读取凭据
+    credentials: undefined
+  });
 }
 
 /**

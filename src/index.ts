@@ -21,10 +21,30 @@ app.use(express.json({ limit: "1mb" }));
 
 const env = {
   PORT: process.env.PORT || "3000",
-  AWS_REGION: process.env.AWS_REGION || "",
+  AWS_REGION: process.env.AWS_REGION || "us-east-1", // 默认区域
   BEDROCK_KB_ID: process.env.BEDROCK_KB_ID || "",
   BEDROCK_MODEL_ARN: process.env.BEDROCK_MODEL_ARN || "",
 };
+
+// 验证必需的环境变量
+console.log("Environment check:");
+console.log("- AWS_REGION:", env.AWS_REGION);
+console.log("- BEDROCK_KB_ID:", env.BEDROCK_KB_ID ? "✓ Set" : "✗ Missing");
+console.log("- BEDROCK_MODEL_ARN:", env.BEDROCK_MODEL_ARN ? "✓ Set" : "✗ Missing");
+console.log("- AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID ? "✓ Set" : "✗ Missing");
+console.log("- AWS_SECRET_ACCESS_KEY:", process.env.AWS_SECRET_ACCESS_KEY ? "✓ Set" : "✗ Missing");
+
+// 检查关键环境变量
+const missingVars = [];
+if (!env.BEDROCK_KB_ID) missingVars.push("BEDROCK_KB_ID");
+if (!env.BEDROCK_MODEL_ARN) missingVars.push("BEDROCK_MODEL_ARN");
+if (!process.env.AWS_ACCESS_KEY_ID) missingVars.push("AWS_ACCESS_KEY_ID");
+if (!process.env.AWS_SECRET_ACCESS_KEY) missingVars.push("AWS_SECRET_ACCESS_KEY");
+
+if (missingVars.length > 0) {
+  console.warn("⚠️  Warning: Missing environment variables:", missingVars.join(", "));
+  console.warn("⚠️  The app will start but Bedrock functionality may not work");
+}
 
 const client = makeBedrockClient(env);
 
